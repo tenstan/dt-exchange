@@ -41,6 +41,10 @@ export function Layout() {
 	)
 	let [deemphasizeOption, setDeemphasizeOption] =
 		useLocalStorage<DeemphasizeOption>("deemphasize-selection", "none")
+	let [enableNotifications, setEnableNotifications] = useLocalStorage(
+		"enable-notifications",
+		false,
+	)
 
 	let [focusedInput, setFocusedInput] = useState<string>("")
 
@@ -177,6 +181,22 @@ export function Layout() {
 					}}
 				/>
 			</div>
+
+			{enableRuleBasedFiltering ? (
+				<div className="sort-row">
+					<label htmlFor="enable-notifications">
+						<Text>Enable notifications:</Text>
+					</label>
+					<input
+						type="checkbox"
+						id="enable-notifications"
+						checked={enableNotifications}
+						onChange={(event) => {
+							setEnableNotifications(event.target.checked)
+						}}
+					/>
+				</div>
+			) : null}
 
 			{enableRuleBasedFiltering ? (
 				<div className="rbf-row">
