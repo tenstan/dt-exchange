@@ -223,12 +223,12 @@ export type ItemCategory = (typeof ITEM_CATEGORIES)[number]
 export const ITEM_OPTIONS = Object.values(ITEM_CATEGORIES) as ItemCategory[]
 
 export interface FilterRule {
-	character?: ClassType[] | ClassType
+	character?: ClassType[]
 	item?: string[] | string
 	type?: ItemCategory
 	blessing?: string[] | string
 	perk?: string[] | string
-	store?: StoreType[] | StoreType
+	store?: StoreType[]
 	minBlessingRarity?: number
 	minPerkRarity?: number
 	minStats?: number

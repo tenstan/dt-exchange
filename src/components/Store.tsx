@@ -86,14 +86,11 @@ function filterFunc(
 		return
 	}
 
-	let arr: string[]
+	let arr: string[] | undefined
 
 	var found = targets.findIndex(function (target) {
-		arr =
-			typeof target.character === "string"
-				? [target.character]
-				: target.character
-		if (target.character && !arr.includes(char.archetype)) {
+		arr = target.character
+		if (arr && !arr.includes(char.archetype)) {
 			return false
 		}
 
