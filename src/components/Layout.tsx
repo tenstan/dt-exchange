@@ -15,6 +15,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage"
 import { SplitRuleWrapper } from "./RuleBasedFilters/components/SplitRuleWrapper"
 import { Rule } from "./RuleBasedFilters/components/Rule"
 import { DeemphasizeOption } from "./Item/Item"
+import { performCheck } from "../notifications.chrome"
 
 export function Layout() {
 	let account = useAccount()
@@ -197,6 +198,8 @@ export function Layout() {
 					/>
 				</div>
 			) : null}
+
+			<button onClick={() => performCheck()}>Test</button>
 
 			{enableRuleBasedFiltering ? (
 				<div className="rbf-row">

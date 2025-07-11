@@ -75,7 +75,7 @@ let filterOptions = {
 export type FilterOption = keyof typeof filterOptions
 export const FILTER_OPTIONS = Object.keys(filterOptions) as FilterOption[]
 
-function filterFunc(
+export function filterFunc(
 	char: Character | undefined,
 	storeType: StoreType,
 	offer: Personal,
