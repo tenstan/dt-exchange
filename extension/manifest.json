@@ -18,5 +18,9 @@
 	],
 	"action": {
 		"default_title": "Armoury Exchange"
-	}
+	},
+  "permissions": [
+    "alarms",
+    "notifications"
+  ]
 }

@@ -1,4 +1,4 @@
-import { flatMap, uniq, uniqWith } from "lodash"
+import { flatMap, max, uniq, uniqWith } from "lodash"
 import {
 	Character,
 	CLASS_TYPES,
@@ -116,4 +116,11 @@ export const performCheck = async () => {
 	}
 
 	console.log(`There were ${count} matches.`)
+
+	// TODO: return a different number if the currentRotationEnd would conflict with the minimum 30s increment of an alarm
+	const nextSchedule = max(
+		stores.map((store) => store.storeData.currentRotationEnd),
+	)
+
+	return { nextSchedule }
 }

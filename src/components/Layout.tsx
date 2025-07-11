@@ -15,7 +15,8 @@ import { useLocalStorage } from "../hooks/useLocalStorage"
 import { SplitRuleWrapper } from "./RuleBasedFilters/components/SplitRuleWrapper"
 import { Rule } from "./RuleBasedFilters/components/Rule"
 import { DeemphasizeOption } from "./Item/Item"
-import { performCheck } from "../notifications.chrome"
+import { performCheck } from "../notifications"
+import browser from "webextension-polyfill"
 
 export function Layout() {
 	let account = useAccount()
@@ -199,7 +200,18 @@ export function Layout() {
 				</div>
 			) : null}
 
-			<button onClick={() => performCheck()}>Test</button>
+			<button onClick={() => performCheck()}>Perform check</button>
+			<button
+				onClick={() =>
+					browser.runtime.sendMessage({
+						message: {
+							action: "toggleNotification",
+						},
+					})
+				}
+			>
+				Trigger background script
+			</button>
 
 			{enableRuleBasedFiltering ? (
 				<div className="rbf-row">
