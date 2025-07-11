@@ -1,4 +1,4 @@
-import { filter, flatMap, uniq, uniqWith } from "lodash"
+import { flatMap, uniq, uniqWith } from "lodash"
 import {
 	Character,
 	CLASS_TYPES,
@@ -75,13 +75,13 @@ export const performCheck = async () => {
 
 	const result = getStorefrontsToConsider(summary.characters, filterRules)
 
-	const promises = result.map(async (storefront) => {
-		const store = fetcher(
+	const storePromises = result.map(async (storefront) => {
+		const storeData = (await fetcher(
 			`/store/storefront/${storefront.store}_store_${storefront.character.archetype}?accountId=:sub&personal=true&characterId=${storefront.character.id}`,
-		) as Promise<Store>
+		)) as Store
 
 		return {
-			store,
+			storeData,
 			meta: {
 				store: storefront.store,
 				character: storefront.character,
@@ -89,15 +89,15 @@ export const performCheck = async () => {
 		}
 	})
 
-	const stores = await Promise.all(promises)
+	const stores = await Promise.all(storePromises)
 
-	let data = (await fetcher("/master-data/meta/items")) as MasterData
-	let masterListKey = data.playerItems.href
-	let items = (await fetcher(masterListKey)) as Items
+	const data = (await fetcher("/master-data/meta/items")) as MasterData
+	const masterListKey = data.playerItems.href
+	const items = (await fetcher(masterListKey)) as Items
 
 	let count = 0
 	for (const store of stores) {
-		for (const pers of (await store.store).personal) {
+		for (const pers of store.storeData.personal) {
 			filterFunc(
 				store.meta.character,
 				store.meta.store,
@@ -108,7 +108,7 @@ export const performCheck = async () => {
 
 			if (
 				pers.description.overrides.filter_match !== undefined &&
-				pers.description.overrides.filter_match > 0
+				pers.description.overrides.filter_match >= 0
 			) {
 				count++
 			}
