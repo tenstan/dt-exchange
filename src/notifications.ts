@@ -12,48 +12,7 @@ import {
 import { createFetcher, getFatSharkUser } from "./utils"
 import isEqual from "fast-deep-equal"
 import { filterFunc } from "./components/Store"
-
-const getStorefrontsToConsider = (
-	characters: Character[],
-	filterRules: FilterRule[],
-) => {
-	const availablePlayerClasses = uniq(
-		characters.map((character) => character.archetype),
-	)
-
-	// Filter rules that are relevant to the player's characters
-	const filteredFilterRules = filterRules.filter(
-		(rule) =>
-			rule.character === undefined ||
-			rule.character.some((characterClass) =>
-				availablePlayerClasses.includes(characterClass),
-			),
-	)
-
-	// Get all unique storefront combinations based on the specified filter rules
-	const relevantStorefronts = uniqWith(
-		filteredFilterRules.flatMap((rule) => {
-			const stores = rule.store || STORE_TYPES
-			const classTypes = rule.character || CLASS_TYPES
-
-			return flatMap(stores, (store) =>
-				classTypes.map((classType) => ({ store, classType })),
-			)
-		}, isEqual),
-	)
-
-	// Finally create an storefront entry for every character that the player owns
-	const characterStoreFronts = characters.flatMap((character) =>
-		relevantStorefronts
-			.filter((storefront) => storefront.classType === character.archetype)
-			.map((storefront) => ({
-				store: storefront.store,
-				character,
-			})),
-	)
-
-	return characterStoreFronts
-}
+import { getRelevantStoresFromFilters } from "./lib/darktide-store"
 
 export const performCheck = async () => {
 	const user = getFatSharkUser()
@@ -73,17 +32,17 @@ export const performCheck = async () => {
 
 	const filterRules = JSON.parse(filterRulesStorage) as FilterRule[]
 
-	const result = getStorefrontsToConsider(summary.characters, filterRules)
+	const result = getRelevantStoresFromFilters(summary.characters, filterRules)
 
 	const storePromises = result.map(async (storefront) => {
 		const storeData = (await fetcher(
-			`/store/storefront/${storefront.store}_store_${storefront.character.archetype}?accountId=:sub&personal=true&characterId=${storefront.character.id}`,
+			`/store/storefront/${storefront.storeType}_store_${storefront.character.archetype}?accountId=:sub&personal=true&characterId=${storefront.character.id}`,
 		)) as Store
 
 		return {
 			storeData,
 			meta: {
-				store: storefront.store,
+				store: storefront.storeType,
 				character: storefront.character,
 			},
 		}
