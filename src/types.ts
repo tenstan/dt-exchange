@@ -262,3 +262,5 @@ export const SIZE = ["small", "medium", "large"] as const
 export type Size = (typeof SIZE)[number]
 
 export const defaultEmphasisColor: string = "#FF0000"
+
+export type MessageAction = "enable-notifications" | "disable-notifications"

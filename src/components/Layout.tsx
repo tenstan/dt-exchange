@@ -15,8 +15,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage"
 import { SplitRuleWrapper } from "./RuleBasedFilters/components/SplitRuleWrapper"
 import { Rule } from "./RuleBasedFilters/components/Rule"
 import { DeemphasizeOption } from "./Item/Item"
-import { performCheck } from "../notifications"
-import browser from "webextension-polyfill"
+import { disableNotifications, enableNotifications } from "../lib/messaging"
 
 export function Layout() {
 	let account = useAccount()
@@ -29,6 +28,7 @@ export function Layout() {
 		"filter-rules",
 		[{ minStats: 360 }],
 	)
+	// TODO: Figure out some way to make this data available after installation for all users through the Storage API
 	let [filterOption, setFilterOption] = useLocalStorage<FilterOption>(
 		"filter-option",
 		FILTER_OPTIONS[0]!,
@@ -43,10 +43,6 @@ export function Layout() {
 	)
 	let [deemphasizeOption, setDeemphasizeOption] =
 		useLocalStorage<DeemphasizeOption>("deemphasize-selection", "none")
-	let [enableNotifications, setEnableNotifications] = useLocalStorage(
-		"enable-notifications",
-		false,
-	)
 
 	let [focusedInput, setFocusedInput] = useState<string>("")
 
@@ -192,26 +188,16 @@ export function Layout() {
 					<input
 						type="checkbox"
 						id="enable-notifications"
-						checked={enableNotifications}
 						onChange={(event) => {
-							setEnableNotifications(event.target.checked)
+							if (event.target.checked) {
+								enableNotifications()
+							} else {
+								disableNotifications()
+							}
 						}}
 					/>
 				</div>
 			) : null}
-
-			<button onClick={() => performCheck()}>Perform check</button>
-			<button
-				onClick={() =>
-					browser.runtime.sendMessage({
-						message: {
-							action: "toggleNotification",
-						},
-					})
-				}
-			>
-				Trigger background script
-			</button>
 
 			{enableRuleBasedFiltering ? (
 				<div className="rbf-row">

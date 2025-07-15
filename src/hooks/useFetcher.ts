@@ -1,9 +1,7 @@
 import { useMemo, useRef } from "react"
 import isEqual from "fast-deep-equal"
-import { createFetcher, getFatSharkUser } from "../utils"
+import { createFetcher, Fetcher, getFatSharkUser } from "../utils"
 import type { User } from "../types"
-
-type Fetcher = <T>(path: string) => Promise<T>
 
 export function useFetcher(): Fetcher {
 	let userRef = useRef<User>()

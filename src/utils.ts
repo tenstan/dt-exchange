@@ -1,6 +1,9 @@
 import type { User } from "./types"
+import browser from "webextension-polyfill"
 
-export function createFetcher(user: User) {
+export type Fetcher = <T>(path: string) => Promise<T>
+
+export function createFetcher(user: User): Fetcher {
 	return async function fetchApi(path: string) {
 		let url = path.startsWith("https")
 			? path
@@ -44,7 +47,9 @@ export function getFatSharkUser(): User | undefined {
 		return undefined
 	}
 
-	return safeJsonParse<User>(user)
+	const result = safeJsonParse<User>(user)
+	browser.storage.local.set({ ["fatshark-user"]: result })
+	return result
 }
 
 export function log(text: string, color = "black") {
